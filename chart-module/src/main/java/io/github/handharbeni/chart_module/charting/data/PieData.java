@@ -1,8 +1,6 @@
 
 package io.github.handharbeni.chart_module.charting.data;
 
-import android.util.Log;
-
 import io.github.handharbeni.chart_module.charting.highlight.Highlight;
 import io.github.handharbeni.chart_module.charting.interfaces.datasets.IPieDataSet;
 
@@ -46,18 +44,6 @@ public class PieData extends ChartData<IPieDataSet> {
      */
     public IPieDataSet getDataSet() {
         return mDataSets.get(0);
-    }
-
-    @Override
-    public List<IPieDataSet> getDataSets() {
-        List<IPieDataSet> dataSets = super.getDataSets();
-
-        if (dataSets.size() < 1) {
-            Log.e("MPAndroidChart",
-                    "Found multiple data sets while pie chart only allows one");
-        }
-
-        return dataSets;
     }
 
     /**

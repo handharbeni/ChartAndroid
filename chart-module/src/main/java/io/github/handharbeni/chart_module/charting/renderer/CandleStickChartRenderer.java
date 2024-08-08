@@ -1,4 +1,3 @@
-
 package io.github.handharbeni.chart_module.charting.renderer;
 
 import android.graphics.Canvas;
@@ -8,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import io.github.handharbeni.chart_module.charting.animation.ChartAnimator;
 import io.github.handharbeni.chart_module.charting.data.CandleData;
 import io.github.handharbeni.chart_module.charting.data.CandleEntry;
+import io.github.handharbeni.chart_module.charting.formatter.ValueFormatter;
 import io.github.handharbeni.chart_module.charting.highlight.Highlight;
 import io.github.handharbeni.chart_module.charting.interfaces.dataprovider.CandleDataProvider;
 import io.github.handharbeni.chart_module.charting.interfaces.datasets.ICandleDataSet;
@@ -279,6 +279,8 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
 
                 float yOffset = Utils.convertDpToPixel(5f);
 
+                ValueFormatter formatter = dataSet.getValueFormatter();
+
                 MPPointF iconsOffset = MPPointF.getInstance(dataSet.getIconsOffset());
                 iconsOffset.x = Utils.convertDpToPixel(iconsOffset.x);
                 iconsOffset.y = Utils.convertDpToPixel(iconsOffset.y);
@@ -297,15 +299,7 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
                     CandleEntry entry = dataSet.getEntryForIndex(j / 2 + mXBounds.min);
 
                     if (dataSet.isDrawValuesEnabled()) {
-                        drawValue(c,
-                                dataSet.getValueFormatter(),
-                                entry.getHigh(),
-                                entry,
-                                i,
-                                x,
-                                y - yOffset,
-                                dataSet
-                                        .getValueTextColor(j / 2));
+                        drawValue(c, formatter.getCandleLabel(entry), x, y - yOffset, dataSet.getValueTextColor(j / 2));
                     }
 
                     if (entry.getIcon() != null && dataSet.isDrawIconsEnabled()) {
@@ -325,6 +319,12 @@ public class CandleStickChartRenderer extends LineScatterCandleRadarRenderer {
                 MPPointF.recycleInstance(iconsOffset);
             }
         }
+    }
+
+    @Override
+    public void drawValue(Canvas c, String valueText, float x, float y, int color) {
+        mValuePaint.setColor(color);
+        c.drawText(valueText, x, y, mValuePaint);
     }
 
     @Override

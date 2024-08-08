@@ -3,7 +3,6 @@ package io.github.handharbeni.chart_module.charting.data;
 
 import android.util.Log;
 
-import io.github.handharbeni.chart_module.charting.components.YAxis;
 import io.github.handharbeni.chart_module.charting.highlight.Highlight;
 import io.github.handharbeni.chart_module.charting.interfaces.datasets.IBarLineScatterCandleBubbleDataSet;
 
@@ -92,26 +91,18 @@ public class CombinedData extends BarLineScatterCandleBubbleData<IBarLineScatter
             if (data.getXMin() < mXMin)
                 mXMin = data.getXMin();
 
-            for (IBarLineScatterCandleBubbleDataSet<? extends Entry> dataset : sets) {
-                if (dataset.getAxisDependency() == YAxis.AxisDependency.LEFT)  {
-                    if (dataset.getYMax() > mLeftAxisMax) {
-                        mLeftAxisMax = dataset.getYMax();
-                    }
+            if (data.mLeftAxisMax > mLeftAxisMax)
+                mLeftAxisMax = data.mLeftAxisMax;
 
-                    if (dataset.getYMin() < mLeftAxisMin) {
-                        mLeftAxisMin = dataset.getYMin();
-                    }
-                }
-                else {
-                    if (dataset.getYMax() > mRightAxisMax) {
-                        mRightAxisMax = dataset.getYMax();
-                    }
+            if (data.mLeftAxisMin < mLeftAxisMin)
+                mLeftAxisMin = data.mLeftAxisMin;
 
-                    if (dataset.getYMin() < mRightAxisMin) {
-                        mRightAxisMin = dataset.getYMin();
-                    }
-                }
-            }
+            if (data.mRightAxisMax > mRightAxisMax)
+                mRightAxisMax = data.mRightAxisMax;
+
+            if (data.mRightAxisMin < mRightAxisMin)
+                mRightAxisMin = data.mRightAxisMin;
+
         }
     }
 

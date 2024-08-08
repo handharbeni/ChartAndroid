@@ -7,7 +7,7 @@ group='io.github.handharbeni'
 ext {
     // Provide your own coordinates here
     PUBLISH_GROUP_ID = 'io.github.handharbeni'
-    PUBLISH_VERSION = '1.0.0'
+    PUBLISH_VERSION = '1.0.1'
     PUBLISH_ARTIFACT_ID = 'androidchart-module'
     PUBLISH_DESCRIPTION = 'Chart Android Module'
     PUBLISH_URL = 'https://github.com/handharbeni/ChartAndroid'

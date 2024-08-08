@@ -1,9 +1,7 @@
-
 package io.github.handharbeni.chart_module.charting.formatter;
 
-import io.github.handharbeni.chart_module.charting.components.AxisBase;
-import io.github.handharbeni.chart_module.charting.data.Entry;
-import io.github.handharbeni.chart_module.charting.utils.ViewPortHandler;
+import io.github.handharbeni.chart_module.charting.charts.PieChart;
+import io.github.handharbeni.chart_module.charting.data.PieEntry;
 
 import java.text.DecimalFormat;
 
@@ -13,37 +11,36 @@ import java.text.DecimalFormat;
  *
  * @author Philipp Jahoda
  */
-public class PercentFormatter implements IValueFormatter, IAxisValueFormatter
+public class PercentFormatter extends ValueFormatter
 {
 
-    protected DecimalFormat mFormat;
+    public DecimalFormat mFormat;
+    private PieChart pieChart;
 
     public PercentFormatter() {
         mFormat = new DecimalFormat("###,###,##0.0");
     }
 
-    /**
-     * Allow a custom decimalformat
-     *
-     * @param format
-     */
-    public PercentFormatter(DecimalFormat format) {
-        this.mFormat = format;
+    // Can be used to remove percent signs if the chart isn't in percent mode
+    public PercentFormatter(PieChart pieChart) {
+        this();
+        this.pieChart = pieChart;
     }
 
-    // IValueFormatter
     @Override
-    public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+    public String getFormattedValue(float value) {
         return mFormat.format(value) + " %";
     }
 
-    // IAxisValueFormatter
     @Override
-    public String getFormattedValue(float value, AxisBase axis) {
-        return mFormat.format(value) + " %";
+    public String getPieLabel(float value, PieEntry pieEntry) {
+        if (pieChart != null && pieChart.isUsePercentValuesEnabled()) {
+            // Converted to percent
+            return getFormattedValue(value);
+        } else {
+            // raw value, skip percent sign
+            return mFormat.format(value);
+        }
     }
 
-    public int getDecimalDigits() {
-        return 1;
-    }
 }

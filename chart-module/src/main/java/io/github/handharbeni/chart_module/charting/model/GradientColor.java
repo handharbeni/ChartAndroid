@@ -1,69 +1,28 @@
 package io.github.handharbeni.chart_module.charting.model;
 
-import io.github.handharbeni.chart_module.charting.utils.Fill;
+public class GradientColor {
 
-/**
- * Deprecated. Use `Fill`
- */
-@Deprecated
-public class GradientColor extends Fill
-{
-    /**
-     * Deprecated. Use `Fill.getGradientColors()`
-     */
-    @Deprecated
-    public int getStartColor()
-    {
-        return getGradientColors()[0];
+    private int startColor;
+    private int endColor;
+    
+    public GradientColor(int startColor, int endColor) {
+        this.startColor = startColor;
+        this.endColor = endColor;
     }
 
-    /**
-     * Deprecated. Use `Fill.setGradientColors(...)`
-     */
-    @Deprecated
-    public void setStartColor(int startColor)
-    {
-        if (getGradientColors() == null || getGradientColors().length != 2)
-        {
-            setGradientColors(new int[]{
-                    startColor,
-                    getGradientColors() != null && getGradientColors().length > 1
-                            ? getGradientColors()[1]
-                            : 0
-            });
-        } else
-        {
-            getGradientColors()[0] = startColor;
-        }
+    public int getStartColor() {
+        return startColor;
     }
 
-    /**
-     * Deprecated. Use `Fill.getGradientColors()`
-     */
-    @Deprecated
-    public int getEndColor()
-    {
-        return getGradientColors()[1];
+    public void setStartColor(int startColor) {
+        this.startColor = startColor;
     }
 
-    /**
-     * Deprecated. Use `Fill.setGradientColors(...)`
-     */
-    @Deprecated
-    public void setEndColor(int endColor)
-    {
-        if (getGradientColors() == null || getGradientColors().length != 2)
-        {
-            setGradientColors(new int[]{
-                    getGradientColors() != null && getGradientColors().length > 0
-                            ? getGradientColors()[0]
-                            : 0,
-                    endColor
-            });
-        } else
-        {
-            getGradientColors()[1] = endColor;
-        }
+    public int getEndColor() {
+        return endColor;
     }
 
+    public void setEndColor(int endColor) {
+        this.endColor = endColor;
+    }
 }

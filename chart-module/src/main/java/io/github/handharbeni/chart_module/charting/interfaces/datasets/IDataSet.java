@@ -1,15 +1,15 @@
 package io.github.handharbeni.chart_module.charting.interfaces.datasets;
 
 import android.graphics.DashPathEffect;
-import android.graphics.PointF;
 import android.graphics.Typeface;
 
 import io.github.handharbeni.chart_module.charting.components.Legend;
 import io.github.handharbeni.chart_module.charting.components.YAxis;
 import io.github.handharbeni.chart_module.charting.data.DataSet;
 import io.github.handharbeni.chart_module.charting.data.Entry;
-import io.github.handharbeni.chart_module.charting.formatter.IValueFormatter;
+import io.github.handharbeni.chart_module.charting.formatter.ValueFormatter;
 import io.github.handharbeni.chart_module.charting.utils.MPPointF;
+import io.github.handharbeni.chart_module.charting.model.GradientColor;
 
 import java.util.List;
 
@@ -286,6 +286,28 @@ public interface IDataSet<T extends Entry> {
     int getColor();
 
     /**
+     * Returns the Gradient color model
+     *
+     * @return
+     */
+    GradientColor getGradientColor();
+
+    /**
+     * Returns the Gradient colors
+     *
+     * @return
+     */
+    List<GradientColor> getGradientColors();
+
+    /**
+     * Returns the Gradient colors
+     *
+     * @param index
+     * @return
+     */
+    GradientColor getGradientColor(int index);
+
+    /**
      * Returns the color at the given index of the DataSet's color array.
      * Performs a IndexOutOfBounds check by modulus.
      *
@@ -318,14 +340,14 @@ public interface IDataSet<T extends Entry> {
      *
      * @param f
      */
-    void setValueFormatter(IValueFormatter f);
+    void setValueFormatter(ValueFormatter f);
 
     /**
      * Returns the formatter used for drawing the values inside the chart.
      *
      * @return
      */
-    IValueFormatter getValueFormatter();
+    ValueFormatter getValueFormatter();
 
     /**
      * Returns true if the valueFormatter object of this DataSet is null.

@@ -7,8 +7,9 @@ import android.graphics.Typeface;
 
 import io.github.handharbeni.chart_module.charting.components.Legend;
 import io.github.handharbeni.chart_module.charting.components.YAxis;
-import io.github.handharbeni.chart_module.charting.formatter.IValueFormatter;
+import io.github.handharbeni.chart_module.charting.formatter.ValueFormatter;
 import io.github.handharbeni.chart_module.charting.interfaces.datasets.IDataSet;
+import io.github.handharbeni.chart_module.charting.model.GradientColor;
 import io.github.handharbeni.chart_module.charting.utils.ColorTemplate;
 import io.github.handharbeni.chart_module.charting.utils.MPPointF;
 import io.github.handharbeni.chart_module.charting.utils.Utils;
@@ -27,6 +28,10 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
      * List representing all colors that are used for this DataSet
      */
     protected List<Integer> mColors = null;
+
+    protected GradientColor mGradientColor = null;
+
+    protected List<GradientColor> mGradientColors = null;
 
     /**
      * List representing all colors that are used for drawing the actual values for this DataSet
@@ -51,7 +56,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     /**
      * custom formatter that is used instead of the auto-formatter if set
      */
-    protected transient IValueFormatter mValueFormatter;
+    protected transient ValueFormatter mValueFormatter;
 
     /**
      * the typeface used for the value text
@@ -141,6 +146,21 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
         return mColors.get(index % mColors.size());
     }
 
+    @Override
+    public GradientColor getGradientColor() {
+        return mGradientColor;
+    }
+
+    @Override
+    public List<GradientColor> getGradientColors() {
+        return mGradientColors;
+    }
+
+    @Override
+    public GradientColor getGradientColor(int index) {
+        return mGradientColors.get(index % mGradientColors.size());
+    }
+
     /**
      * ###### ###### COLOR SETTING RELATED METHODS ##### ######
      */
@@ -217,6 +237,25 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     }
 
     /**
+     * Sets the start and end color for gradient color, ONLY color that should be used for this DataSet.
+     *
+     * @param startColor
+     * @param endColor
+     */
+    public void setGradientColor(int startColor, int endColor) {
+        mGradientColor = new GradientColor(startColor, endColor);
+    }
+
+    /**
+     * Sets the start and end color for gradient colors, ONLY color that should be used for this DataSet.
+     *
+     * @param gradientColors
+     */
+    public void setGradientColors(List<GradientColor> gradientColors) {
+        this.mGradientColors = gradientColors;
+    }
+
+    /**
      * Sets a color with a specific alpha value.
      *
      * @param color
@@ -274,7 +313,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     }
 
     @Override
-    public void setValueFormatter(IValueFormatter f) {
+    public void setValueFormatter(ValueFormatter f) {
 
         if (f == null)
             return;
@@ -283,7 +322,7 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
     }
 
     @Override
-    public IValueFormatter getValueFormatter() {
+    public ValueFormatter getValueFormatter() {
         if (needsFormatter())
             return Utils.getDefaultValueFormatter();
         return mValueFormatter;
@@ -495,6 +534,8 @@ public abstract class BaseDataSet<T extends Entry> implements IDataSet<T> {
         baseDataSet.mFormLineDashEffect = mFormLineDashEffect;
         baseDataSet.mFormLineWidth = mFormLineWidth;
         baseDataSet.mFormSize = mFormSize;
+        baseDataSet.mGradientColor = mGradientColor;
+        baseDataSet.mGradientColors = mGradientColors;
         baseDataSet.mHighlightEnabled = mHighlightEnabled;
         baseDataSet.mIconsOffset = mIconsOffset;
         baseDataSet.mValueColors = mValueColors;

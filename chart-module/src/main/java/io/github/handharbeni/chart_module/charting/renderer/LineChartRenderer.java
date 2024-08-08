@@ -12,6 +12,7 @@ import io.github.handharbeni.chart_module.charting.charts.LineChart;
 import io.github.handharbeni.chart_module.charting.data.Entry;
 import io.github.handharbeni.chart_module.charting.data.LineData;
 import io.github.handharbeni.chart_module.charting.data.LineDataSet;
+import io.github.handharbeni.chart_module.charting.formatter.ValueFormatter;
 import io.github.handharbeni.chart_module.charting.highlight.Highlight;
 import io.github.handharbeni.chart_module.charting.interfaces.dataprovider.LineDataProvider;
 import io.github.handharbeni.chart_module.charting.interfaces.datasets.IDataSet;
@@ -294,7 +295,7 @@ public class LineChartRenderer extends LineRadarRenderer {
 
         int entryCount = dataSet.getEntryCount();
 
-        final boolean isDrawSteppedEnabled = dataSet.isDrawSteppedEnabled();
+        final boolean isDrawSteppedEnabled = dataSet.getMode() == LineDataSet.Mode.STEPPED;
         final int pointsPerEntryPair = isDrawSteppedEnabled ? 4 : 2;
 
         Transformer trans = mChart.getTransformer(dataSet.getAxisDependency());
@@ -322,14 +323,10 @@ public class LineChartRenderer extends LineRadarRenderer {
         // more than 1 color
         if (dataSet.getColors().size() > 1) {
 
-            int numberOfFloats = pointsPerEntryPair * 2;
+            if (mLineBuffer.length <= pointsPerEntryPair * 2)
+                mLineBuffer = new float[pointsPerEntryPair * 4];
 
-            if (mLineBuffer.length <= numberOfFloats)
-                mLineBuffer = new float[numberOfFloats * 2];
-
-            int max = mXBounds.min + mXBounds.range;
-
-            for (int j = mXBounds.min; j < max; j++) {
+            for (int j = mXBounds.min; j <= mXBounds.range + mXBounds.min; j++) {
 
                 Entry e = dataSet.getEntryForIndex(j);
                 if (e == null) continue;
@@ -360,26 +357,16 @@ public class LineChartRenderer extends LineRadarRenderer {
                     mLineBuffer[3] = mLineBuffer[1];
                 }
 
-                // Determine the start and end coordinates of the line, and make sure they differ.
-                float firstCoordinateX = mLineBuffer[0];
-                float firstCoordinateY = mLineBuffer[1];
-                float lastCoordinateX = mLineBuffer[numberOfFloats - 2];
-                float lastCoordinateY = mLineBuffer[numberOfFloats - 1];
-
-                if (firstCoordinateX == lastCoordinateX &&
-                        firstCoordinateY == lastCoordinateY)
-                    continue;
-
                 trans.pointValuesToPixel(mLineBuffer);
 
-                if (!mViewPortHandler.isInBoundsRight(firstCoordinateX))
+                if (!mViewPortHandler.isInBoundsRight(mLineBuffer[0]))
                     break;
 
                 // make sure the lines don't do shitty things outside
                 // bounds
-                if (!mViewPortHandler.isInBoundsLeft(lastCoordinateX) ||
-                        !mViewPortHandler.isInBoundsTop(Math.max(firstCoordinateY, lastCoordinateY)) ||
-                        !mViewPortHandler.isInBoundsBottom(Math.min(firstCoordinateY, lastCoordinateY)))
+                if (!mViewPortHandler.isInBoundsLeft(mLineBuffer[2])
+                        || (!mViewPortHandler.isInBoundsTop(mLineBuffer[1]) && !mViewPortHandler
+                        .isInBoundsBottom(mLineBuffer[3])))
                     continue;
 
                 // get the color that is set for this line-segment
@@ -561,6 +548,7 @@ public class LineChartRenderer extends LineRadarRenderer {
 
                 float[] positions = trans.generateTransformedValuesLine(dataSet, mAnimator.getPhaseX(), mAnimator
                         .getPhaseY(), mXBounds.min, mXBounds.max);
+                ValueFormatter formatter = dataSet.getValueFormatter();
 
                 MPPointF iconsOffset = MPPointF.getInstance(dataSet.getIconsOffset());
                 iconsOffset.x = Utils.convertDpToPixel(iconsOffset.x);
@@ -580,8 +568,7 @@ public class LineChartRenderer extends LineRadarRenderer {
                     Entry entry = dataSet.getEntryForIndex(j / 2 + mXBounds.min);
 
                     if (dataSet.isDrawValuesEnabled()) {
-                        drawValue(c, dataSet.getValueFormatter(), entry.getY(), entry, i, x,
-                                y - valOffset, dataSet.getValueTextColor(j / 2));
+                        drawValue(c, formatter.getPointLabel(entry), x, y - valOffset, dataSet.getValueTextColor(j / 2));
                     }
 
                     if (entry.getIcon() != null && dataSet.isDrawIconsEnabled()) {
@@ -601,6 +588,12 @@ public class LineChartRenderer extends LineRadarRenderer {
                 MPPointF.recycleInstance(iconsOffset);
             }
         }
+    }
+
+    @Override
+    public void drawValue(Canvas c, String valueText, float x, float y, int color) {
+        mValuePaint.setColor(color);
+        c.drawText(valueText, x, y, mValuePaint);
     }
 
     @Override

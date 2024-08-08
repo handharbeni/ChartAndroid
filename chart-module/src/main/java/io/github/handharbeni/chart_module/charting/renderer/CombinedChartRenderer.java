@@ -1,6 +1,7 @@
 package io.github.handharbeni.chart_module.charting.renderer;
 
 import android.graphics.Canvas;
+import android.util.Log;
 
 import io.github.handharbeni.chart_module.charting.animation.ChartAnimator;
 import io.github.handharbeni.chart_module.charting.charts.Chart;
@@ -9,7 +10,6 @@ import io.github.handharbeni.chart_module.charting.charts.CombinedChart.DrawOrde
 import io.github.handharbeni.chart_module.charting.data.ChartData;
 import io.github.handharbeni.chart_module.charting.data.CombinedData;
 import io.github.handharbeni.chart_module.charting.highlight.Highlight;
-import io.github.handharbeni.chart_module.charting.interfaces.dataprovider.BarLineScatterCandleBubbleDataProvider;
 import io.github.handharbeni.chart_module.charting.utils.ViewPortHandler;
 
 import java.lang.ref.WeakReference;
@@ -87,6 +87,11 @@ public class CombinedChartRenderer extends DataRenderer {
 
         for (DataRenderer renderer : mRenderers)
             renderer.drawData(c);
+    }
+
+    @Override
+    public void drawValue(Canvas c, String valueText, float x, float y, int color) {
+        Log.e("MPAndroidChart", "Erroneous call to drawValue() in CombinedChartRenderer!");
     }
 
     @Override

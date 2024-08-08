@@ -3,7 +3,6 @@ package io.github.handharbeni.chart_module.charting.data;
 
 import io.github.handharbeni.chart_module.charting.interfaces.datasets.IPieDataSet;
 import io.github.handharbeni.chart_module.charting.utils.Utils;
-import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +22,13 @@ public class PieDataSet extends DataSet<PieEntry> implements IPieDataSet {
 
     private ValuePosition mXValuePosition = ValuePosition.INSIDE_SLICE;
     private ValuePosition mYValuePosition = ValuePosition.INSIDE_SLICE;
+    private boolean mUsingSliceColorAsValueLineColor = false;
     private int mValueLineColor = 0xff000000;
-    private boolean mUseValueColorForLine = false;
     private float mValueLineWidth = 1.0f;
     private float mValueLinePart1OffsetPercentage = 75.f;
     private float mValueLinePart1Length = 0.3f;
     private float mValueLinePart2Length = 0.4f;
     private boolean mValueLineVariableLength = true;
-    private Integer mHighlightColor = null;
 
     public PieDataSet(List<PieEntry> yVals, String label) {
         super(yVals, label);
@@ -40,8 +38,8 @@ public class PieDataSet extends DataSet<PieEntry> implements IPieDataSet {
     @Override
     public DataSet<PieEntry> copy() {
         List<PieEntry> entries = new ArrayList<>();
-        for (int i = 0; i < mEntries.size(); i++) {
-            entries.add(mEntries.get(i).copy());
+        for (int i = 0; i < mValues.size(); i++) {
+            entries.add(mValues.get(i).copy());
         }
         PieDataSet copied = new PieDataSet(entries, getLabel());
         copy(copied);
@@ -137,23 +135,15 @@ public class PieDataSet extends DataSet<PieEntry> implements IPieDataSet {
     }
 
     /**
-     * This method is deprecated.
-     * Use isUseValueColorForLineEnabled() instead.
+     * When valuePosition is OutsideSlice, use slice colors as line color if true
      */
-    @Deprecated
+    @Override
     public boolean isUsingSliceColorAsValueLineColor() {
-        return isUseValueColorForLineEnabled();
+        return mUsingSliceColorAsValueLineColor;
     }
 
-    /**
-     * This method is deprecated.
-     * Use setUseValueColorForLine(...) instead.
-     *
-     * @param enabled
-     */
-    @Deprecated
-    public void setUsingSliceColorAsValueLineColor(boolean enabled) {
-        setUseValueColorForLine(enabled);
+    public void setUsingSliceColorAsValueLineColor(boolean usingSliceColorAsValueLineColor) {
+        this.mUsingSliceColorAsValueLineColor = usingSliceColorAsValueLineColor;
     }
 
     /**
@@ -166,17 +156,6 @@ public class PieDataSet extends DataSet<PieEntry> implements IPieDataSet {
 
     public void setValueLineColor(int valueLineColor) {
         this.mValueLineColor = valueLineColor;
-    }
-
-    @Override
-    public boolean isUseValueColorForLineEnabled()
-    {
-        return mUseValueColorForLine;
-    }
-
-    public void setUseValueColorForLine(boolean enabled)
-    {
-        mUseValueColorForLine = enabled;
     }
 
     /**
@@ -238,21 +217,6 @@ public class PieDataSet extends DataSet<PieEntry> implements IPieDataSet {
     public void setValueLineVariableLength(boolean valueLineVariableLength) {
         this.mValueLineVariableLength = valueLineVariableLength;
     }
-
-    /** Gets the color for the highlighted sector */
-    @Override
-    @Nullable
-    public Integer getHighlightColor()
-    {
-        return mHighlightColor;
-    }
-
-    /** Sets the color for the highlighted sector (null for using entry color) */
-    public void setHighlightColor(@Nullable Integer color)
-    {
-        this.mHighlightColor = color;
-    }
-
 
     public enum ValuePosition {
         INSIDE_SLICE,

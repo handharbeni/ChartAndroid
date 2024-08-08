@@ -1,18 +1,11 @@
 package io.github.handharbeni.chart_module.charting.interfaces.datasets;
 
 import io.github.handharbeni.chart_module.charting.data.BarEntry;
-import io.github.handharbeni.chart_module.charting.utils.Fill;
-
-import java.util.List;
 
 /**
  * Created by philipp on 21/10/15.
  */
 public interface IBarDataSet extends IBarLineScatterCandleBubbleDataSet<BarEntry> {
-
-    List<Fill> getFills();
-
-    Fill getFill(int index);
 
     /**
      * Returns true if this DataSet is stacked (stacksize > 1) or not.

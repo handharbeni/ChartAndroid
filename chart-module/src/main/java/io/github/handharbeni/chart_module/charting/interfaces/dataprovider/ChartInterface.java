@@ -3,7 +3,7 @@ package io.github.handharbeni.chart_module.charting.interfaces.dataprovider;
 import android.graphics.RectF;
 
 import io.github.handharbeni.chart_module.charting.data.ChartData;
-import io.github.handharbeni.chart_module.charting.formatter.IValueFormatter;
+import io.github.handharbeni.chart_module.charting.formatter.ValueFormatter;
 import io.github.handharbeni.chart_module.charting.utils.MPPointF;
 
 /**
@@ -61,7 +61,7 @@ public interface ChartInterface {
 
     RectF getContentRect();
 
-    IValueFormatter getDefaultValueFormatter();
+    ValueFormatter getDefaultValueFormatter();
 
     ChartData getData();
 

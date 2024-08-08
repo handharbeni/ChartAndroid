@@ -1,11 +1,10 @@
-
 package io.github.handharbeni.chart_module.charting.data;
 
 import android.graphics.Typeface;
 import android.util.Log;
 
 import io.github.handharbeni.chart_module.charting.components.YAxis.AxisDependency;
-import io.github.handharbeni.chart_module.charting.formatter.IValueFormatter;
+import io.github.handharbeni.chart_module.charting.formatter.ValueFormatter;
 import io.github.handharbeni.chart_module.charting.highlight.Highlight;
 import io.github.handharbeni.chart_module.charting.interfaces.datasets.IDataSet;
 
@@ -400,7 +399,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
 
         // if a DataSet was removed
         if (removed) {
-            notifyDataChanged();
+            calcMinMax();
         }
 
         return removed;
@@ -527,7 +526,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
             boolean removed = set.removeEntry(e);
 
             if (removed) {
-                notifyDataChanged();
+                calcMinMax();
             }
 
             return removed;
@@ -659,7 +658,7 @@ public abstract class ChartData<T extends IDataSet<? extends Entry>> {
      *
      * @param f
      */
-    public void setValueFormatter(IValueFormatter f) {
+    public void setValueFormatter(ValueFormatter f) {
         if (f == null)
             return;
         else {

@@ -52,11 +52,9 @@ public class YAxisRendererRadarChart extends YAxisRenderer {
         double intervalMagnitude = Utils.roundToNextSignificant(Math.pow(10, (int) Math.log10(interval)));
         int intervalSigDigit = (int) (interval / intervalMagnitude);
         if (intervalSigDigit > 5) {
-            // Use one order of magnitude higher, to avoid intervals like 0.9 or 90
-            // if it's 0.0 after floor(), we use the old value
-            interval = Math.floor(10.0 * intervalMagnitude) == 0.0
-                    ? interval
-                    : Math.floor(10.0 * intervalMagnitude);
+            // Use one order of magnitude higher, to avoid intervals like 0.9 or
+            // 90
+            interval = Math.floor(10 * intervalMagnitude);
         }
 
         boolean centeringEnabled = mAxis.isCenterAxisLabelsEnabled();
@@ -163,8 +161,6 @@ public class YAxisRendererRadarChart extends YAxisRenderer {
                 ? mYAxis.mEntryCount
                 : (mYAxis.mEntryCount - 1);
 
-        float xOffset = mYAxis.getLabelXOffset();
-
         for (int j = from; j < to; j++) {
 
             float r = (mYAxis.mEntries[j] - mYAxis.mAxisMinimum) * factor;
@@ -173,7 +169,7 @@ public class YAxisRendererRadarChart extends YAxisRenderer {
 
             String label = mYAxis.getFormattedLabel(j);
 
-            c.drawText(label, pOut.x + xOffset, pOut.y, mAxisLabelPaint);
+            c.drawText(label, pOut.x + 10, pOut.y, mAxisLabelPaint);
         }
         MPPointF.recycleInstance(center);
         MPPointF.recycleInstance(pOut);

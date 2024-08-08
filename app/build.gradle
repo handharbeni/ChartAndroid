@@ -4,7 +4,7 @@ plugins {
 ext {
     // Provide your own coordinates here
     PUBLISH_GROUP_ID = 'io.github.handharbeni'
-    PUBLISH_VERSION = '1.0.0'
+    PUBLISH_VERSION = '1.0.1'
     PUBLISH_ARTIFACT_ID = 'androidchart-module'
 }
 group='io.github.handharbeni'
@@ -16,8 +16,8 @@ android {
         applicationId "io.github.handharbeni.chartandroid"
         minSdk 21
         targetSdk 32
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -100,8 +100,6 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
 
     protected boolean mClipValuesToContent = false;
 
-    protected boolean mClipDataToContent = true;
-
     /**
      * Sets the minimum offset (padding) around the chart, defaults to 15
      */
@@ -232,12 +230,9 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         if (mAxisRight.isEnabled() && mAxisRight.isDrawLimitLinesBehindDataEnabled())
             mAxisRendererRight.renderLimitLines(canvas);
 
+        // make sure the data cannot be drawn outside the content-rect
         int clipRestoreCount = canvas.save();
-
-        if (isClipDataToContentEnabled()) {
-            // make sure the data cannot be drawn outside the content-rect
-            canvas.clipRect(mViewPortHandler.getContentRect());
-        }
+        canvas.clipRect(mViewPortHandler.getContentRect());
 
         mRenderer.drawData(canvas);
 
@@ -399,70 +394,66 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
         offsets.top = 0.f;
         offsets.bottom = 0.f;
 
-        if (mLegend == null || !mLegend.isEnabled() || mLegend.isDrawInsideEnabled())
-            return;
+        // setup offsets for legend
+        if (mLegend != null && mLegend.isEnabled() && !mLegend.isDrawInsideEnabled()) {
+            switch (mLegend.getOrientation()) {
+                case VERTICAL:
 
-        switch (mLegend.getOrientation()) {
-            case VERTICAL:
+                    switch (mLegend.getHorizontalAlignment()) {
+                        case LEFT:
+                            offsets.left += Math.min(mLegend.mNeededWidth,
+                                    mViewPortHandler.getChartWidth() * mLegend.getMaxSizePercent())
+                                    + mLegend.getXOffset();
+                            break;
 
-                switch (mLegend.getHorizontalAlignment()) {
-                    case LEFT:
-                        offsets.left += Math.min(mLegend.mNeededWidth,
-                                mViewPortHandler.getChartWidth() * mLegend.getMaxSizePercent())
-                                + mLegend.getXOffset();
-                        break;
+                        case RIGHT:
+                            offsets.right += Math.min(mLegend.mNeededWidth,
+                                    mViewPortHandler.getChartWidth() * mLegend.getMaxSizePercent())
+                                    + mLegend.getXOffset();
+                            break;
 
-                    case RIGHT:
-                        offsets.right += Math.min(mLegend.mNeededWidth,
-                                mViewPortHandler.getChartWidth() * mLegend.getMaxSizePercent())
-                                + mLegend.getXOffset();
-                        break;
+                        case CENTER:
 
-                    case CENTER:
+                            switch (mLegend.getVerticalAlignment()) {
+                                case TOP:
+                                    offsets.top += Math.min(mLegend.mNeededHeight,
+                                            mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
+                                            + mLegend.getYOffset();
+                                    break;
 
-                        switch (mLegend.getVerticalAlignment()) {
-                            case TOP:
-                                offsets.top += Math.min(mLegend.mNeededHeight,
-                                        mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
-                                        + mLegend.getYOffset();
-                                break;
+                                case BOTTOM:
+                                    offsets.bottom += Math.min(mLegend.mNeededHeight,
+                                            mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
+                                            + mLegend.getYOffset();
+                                    break;
 
-                            case BOTTOM:
-                                offsets.bottom += Math.min(mLegend.mNeededHeight,
-                                        mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
-                                        + mLegend.getYOffset();
-                                break;
+                                default:
+                                    break;
+                            }
+                    }
 
-                            default:
-                                break;
-                        }
-                }
+                    break;
 
-                break;
+                case HORIZONTAL:
 
-            case HORIZONTAL:
+                    switch (mLegend.getVerticalAlignment()) {
+                        case TOP:
+                            offsets.top += Math.min(mLegend.mNeededHeight,
+                                    mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
+                                    + mLegend.getYOffset();
+                            break;
 
-                switch (mLegend.getVerticalAlignment()) {
-                    case TOP:
-                        offsets.top += Math.min(mLegend.mNeededHeight,
-                                mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
-                                + mLegend.getYOffset();
+                        case BOTTOM:
+                            offsets.bottom += Math.min(mLegend.mNeededHeight,
+                                    mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
+                                    + mLegend.getYOffset();
+                            break;
 
-
-                        break;
-
-                    case BOTTOM:
-                        offsets.bottom += Math.min(mLegend.mNeededHeight,
-                                mViewPortHandler.getChartHeight() * mLegend.getMaxSizePercent())
-                                + mLegend.getYOffset();
-
-
-                        break;
-
-                    default:
-                        break;
-                }
-                break;
+                        default:
+                            break;
+                    }
+                    break;
+            }
         }
     }
 
@@ -1234,17 +1225,6 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
     }
 
     /**
-     * When disabled, the data and/or highlights will not be clipped to contentRect. Disabling this option can
-     *   be useful, when the data lies fully within the content rect, but is drawn in such a way (such as thick lines)
-     *   that there is unwanted clipping.
-     *
-     * @param enabled
-     */
-    public void setClipDataToContent(boolean enabled) {
-        mClipDataToContent = enabled;
-    }
-
-    /**
      * When enabled, the values will be clipped to contentRect,
      * otherwise they can bleed outside the content rect.
      *
@@ -1252,17 +1232,6 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
      */
     public boolean isClipValuesToContentEnabled() {
         return mClipValuesToContent;
-    }
-
-    /**
-     * When disabled, the data and/or highlights will not be clipped to contentRect. Disabling this option can
-     *   be useful, when the data lies fully within the content rect, but is drawn in such a way (such as thick lines)
-     *   that there is unwanted clipping.
-     *
-     * @return
-     */
-    public boolean isClipDataToContentEnabled() {
-        return mClipDataToContent;
     }
 
     /**
